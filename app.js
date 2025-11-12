@@ -3,21 +3,41 @@ document.addEventListener('DOMContentLoaded', () => {
     const fetchButton = document.getElementById('fetchButton');
     const resultsBody = document.getElementById('resultsBody');
     const errorContainer = document.getElementById('errorContainer');
+    
+    const datasetInput = document.getElementById('datasetInput');
+    const locationInput = document.getElementById('locationInput');
+    const startDateInput = document.getElementById('startDateInput');
+    const endDateInput = document.getElementById('endDateInput');
 
     const apiToken = '';
 
-    fetchButton.addEventListener('click', fetchLocationData);
+    fetchButton.addEventListener('click', fetchData);
 
-    async function fetchLocationData() {
+    async function fetchData() {
         resultsBody.innerHTML = '';
         errorContainer.textContent = '';
 
-        if (apiToken === 'TWOJ_TOKEN_API_TUTAJ' || !apiToken) {
-            errorContainer.textContent = 'Proszę wpisać swój token API w pliku app.js w zmiennej apiToken.';
+        const datasetid = datasetInput.value.trim();
+        const locationid = locationInput.value.trim();
+        const startdate = startDateInput.value;
+        const enddate = endDateInput.value;
+
+        if (!datasetid || !locationid || !startdate || !enddate) {
+            errorContainer.textContent = 'Wszystkie pola parametrów są wymagane.';
             return;
         }
 
-        const targetUrl = 'https://www.ncei.noaa.gov/cdo-web/api/v2/locations?limit=50';
+        const baseUrl = 'https://www.ncei.noaa.gov/cdo-web/api/v2/data';
+        
+        const params = new URLSearchParams({
+            datasetid: datasetid,
+            locationid: locationid,
+            startdate: startdate,
+            enddate: enddate,
+            limit: 100 
+        });
+
+        const targetUrl = `${baseUrl}?${params.toString()}`;
         const proxyUrl = `https://corsproxy.io/?${targetUrl}`;
 
         try {
@@ -38,23 +58,23 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = await response.json();
 
             if (!data.results || data.results.length === 0) {
-                 errorContainer.textContent = 'Nie znaleziono żadnych lokalizacji.';
+                 errorContainer.textContent = 'Nie znaleziono danych dla podanych kryteriów.';
                  return;
             }
 
-            data.results.forEach(location => {
+            data.results.forEach(record => {
                 const row = document.createElement('tr');
 
-                const id = location.id || 'Brak danych';
-                const name = location.name || 'Brak danych';
-                const minDate = location.mindate || 'Brak danych';
-                const maxDate = location.maxdate || 'Brak danych';
+                const date = record.date ? record.date.split('T')[0] : 'Brak';
+                const type = record.datatype || 'Brak';
+                const value = record.value !== undefined ? record.value : 'Brak';
+                const station = record.station || 'Brak';
 
                 row.innerHTML = `
-                    <td>${id}</td>
-                    <td>${name}</td>
-                    <td>${minDate}</td>
-                    <td>${maxDate}</td>
+                    <td>${date}</td>
+                    <td>${type}</td>
+                    <td>${value}</td>
+                    <td>${station}</td>
                 `;
 
                 resultsBody.appendChild(row);

@@ -3,26 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lokalizacje NOAA (CORS Proxy)</title>
+    <title>Dane pogodowe NOAA</title>
     <script src="app.js" defer></script>
 </head>
 <body>
 
-    <h1>Pobierz Lokalizacje NOAA</h1>
+    <h1>Pobierz dane pogodowe NOAA (Endpoint: /data)</h1>
 
-    <button id="fetchButton">Pobierz dane</button>
+    <div>
+        <div>
+            <label for="datasetInput">Dataset ID:</label>
+            <input type="text" id="datasetInput" value="GHCND">
+        </div>
+        <div>
+            <label for="locationInput">Location ID:</label>
+            <input type="text" id="locationInput" placeholder="np. ZIP:28801" value="ZIP:28801">
+        </div>
+        <div>
+            <label for="startDateInput">Data początkowa:</label>
+            <input type="date" id="startDateInput" value="2010-05-01">
+        </div>
+        <div>
+            <label for="endDateInput">Data końcowa:</label>
+            <input type="date" id="endDateInput" value="2010-05-01">
+        </div>
+        <button id="fetchButton" style="margin-top: 10px;">Pobierz dane</button>
+    </div>
 
     <div id="errorContainer" style="color: red; margin-top: 10px;"></div>
 
-    <h2>Wyniki (Lokalizacje):</h2>
+    <h2>Wyniki:</h2>
 
     <table border="1" id="resultsTable">
         <thead>
             <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Min Date</th>
-                <th>Max Date</th>
+                <th>Date</th>
+                <th>Data Type</th>
+                <th>Value</th>
+                <th>Station</th>
             </tr>
         </thead>
         <tbody id="resultsBody">

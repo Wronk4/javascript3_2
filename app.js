@@ -4,21 +4,26 @@ document.addEventListener('DOMContentLoaded', () => {
     const resultsBody = document.getElementById('resultsBody');
     const errorContainer = document.getElementById('errorContainer');
 
-    fetchButton.addEventListener('click', fetchStationData);
+    const apiToken = '';
 
+    fetchButton.addEventListener('click', fetchLocationData);
 
-    async function fetchStationData() {
-
+    async function fetchLocationData() {
         resultsBody.innerHTML = '';
         errorContainer.textContent = '';
 
-        //corsproxy bo nie zadziala lokalnie
-        const apiUrl = 'https://corsproxy.io/?https://www.ncei.noaa.gov/cdo-web/api/v2/stations?limit=50';
+        if (apiToken === 'TWOJ_TOKEN_API_TUTAJ' || !apiToken) {
+            errorContainer.textContent = 'Proszę wpisać swój token API w pliku app.js w zmiennej apiToken.';
+            return;
+        }
+
+        const targetUrl = 'https://www.ncei.noaa.gov/cdo-web/api/v2/locations?limit=50';
+        const proxyUrl = `https://corsproxy.io/?${targetUrl}`;
 
         try {
-            const response = await fetch(apiUrl, {
+            const response = await fetch(proxyUrl, {
                 headers: {
-                    'token': ''
+                    'token': apiToken
                 }
             });
 
@@ -33,23 +38,23 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = await response.json();
 
             if (!data.results || data.results.length === 0) {
-                 errorContainer.textContent = 'Nie znaleziono żadnych stacji dla tego zapytania.';
+                 errorContainer.textContent = 'Nie znaleziono żadnych lokalizacji.';
                  return;
             }
 
-            data.results.forEach(station => {
+            data.results.forEach(location => {
                 const row = document.createElement('tr');
 
-                const id = station.id || 'Brak danych';
-                const name = station.name || 'Brak danych';
-                const latitude = station.latitude || 'Brak danych';
-                const longitude = station.longitude || 'Brak danych';
+                const id = location.id || 'Brak danych';
+                const name = location.name || 'Brak danych';
+                const minDate = location.mindate || 'Brak danych';
+                const maxDate = location.maxdate || 'Brak danych';
 
                 row.innerHTML = `
                     <td>${id}</td>
                     <td>${name}</td>
-                    <td>${latitude}</td>
-                    <td>${longitude}</td>
+                    <td>${minDate}</td>
+                    <td>${maxDate}</td>
                 `;
 
                 resultsBody.appendChild(row);

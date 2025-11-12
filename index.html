@@ -3,28 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stacje pogodowe NOAA</title>
+    <title>Lokalizacje NOAA (CORS Proxy)</title>
     <script src="app.js" defer></script>
 </head>
 <body>
 
-    <h1>Pobierz stacje pogodowe NOAA</h1>
+    <h1>Pobierz Lokalizacje NOAA</h1>
 
-    <div>
-        <button id="fetchButton">Pobierz dane</button>
-    </div>
+    <button id="fetchButton">Pobierz dane</button>
 
     <div id="errorContainer" style="color: red; margin-top: 10px;"></div>
 
-    <h2>Wyniki (pierwsze 50 stacji):</h2>
+    <h2>Wyniki (Lokalizacje):</h2>
 
     <table border="1" id="resultsTable">
         <thead>
             <tr>
-                <th>Station ID</th>
+                <th>ID</th>
                 <th>Name</th>
-                <th>Latitude</th>
-                <th>Longitude</th>
+                <th>Min Date</th>
+                <th>Max Date</th>
             </tr>
         </thead>
         <tbody id="resultsBody">
